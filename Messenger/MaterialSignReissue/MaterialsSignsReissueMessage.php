@@ -25,28 +25,28 @@ declare(strict_types=1);
 
 namespace BaksDev\Materials\Sign\Messenger\MaterialSignReissue;
 
-use BaksDev\Orders\Order\Type\Event\OrderEventUid;
+use BaksDev\Orders\Order\Type\Id\OrderUid;
 use BaksDev\Users\Profile\UserProfile\Type\Id\UserProfileUid;
 use BaksDev\Users\User\Type\Id\UserUid;
 
 final readonly class MaterialsSignsReissueMessage
 {
-    private string $orderEvent;
+    private string $order;
 
     private string $user;
 
     private string $profile;
 
-    public function __construct(OrderEventUid $orderEvent, UserUid $user, UserProfileUid $profile)
+    public function __construct(OrderUid $order, UserUid $user, UserProfileUid $profile)
     {
-        $this->orderEvent = (string) $orderEvent;
+        $this->order = (string) $order;
         $this->user = (string) $user;
         $this->profile = (string) $profile;
     }
 
-    public function getOrderEvent(): OrderEventUid
+    public function getOrder(): OrderUid
     {
-        return new OrderEventUid($this->orderEvent);
+        return new OrderUid($this->order);
     }
 
     public function getUser(): UserUid

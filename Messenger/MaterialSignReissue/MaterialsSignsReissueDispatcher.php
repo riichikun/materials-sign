@@ -33,11 +33,11 @@ use BaksDev\Materials\Sign\Messenger\MaterialSignStatus\MaterialSignProcess\Mate
 use BaksDev\Materials\Sign\Repository\MaterialSignProcessByOrder\MaterialSignProcessByOrderInterface;
 use BaksDev\Materials\Sign\Type\Id\MaterialSignUid;
 use BaksDev\Orders\Order\Entity\Event\OrderEvent;
+use BaksDev\Orders\Order\Repository\CurrentOrderEvent\CurrentOrderEventInterface;
 use BaksDev\Products\Product\Repository\CurrentProductIdentifier\CurrentProductIdentifierByEventInterface;
 use BaksDev\Products\Product\Repository\CurrentProductIdentifier\CurrentProductIdentifierResult;
 use BaksDev\Products\Product\Repository\ProductMaterials\ProductMaterialsInterface;
 use BaksDev\Products\Product\Type\Material\MaterialUid;
-use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\Attribute\Target;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
@@ -48,7 +48,7 @@ final readonly class MaterialsSignsReissueDispatcher
     public function __construct(
         #[Target('materialsSignLogger')] private LoggerInterface $Logger,
         private MaterialSignProcessByOrderInterface $MaterialSignProcessByOrderRepository,
-        private EntityManagerInterface $EntityManager,
+        private CurrentOrderEventInterface $CurrentOrderEventRepository,
         private MessageDispatchInterface $MessageDispatch,
         private ProductMaterialsInterface $ProductMaterialsRepository,
         private CurrentProductIdentifierByEventInterface $CurrentProductIdentifierByEventRepository,
@@ -59,13 +59,13 @@ final readonly class MaterialsSignsReissueDispatcher
     /** Перевыпуск честных знаков на сырьё */
     public function __invoke(MaterialsSignsReissueMessage $message): void
     {
-        $orderEventUid = $message->getOrderEvent();
-
-        $orderEvent = $this->EntityManager->getRepository(OrderEvent::class)->find($orderEventUid);
+        $orderEvent = $this->CurrentOrderEventRepository
+            ->forOrder($message->getOrder())
+            ->find();
 
         if(false === ($orderEvent instanceof OrderEvent))
         {
-            $this->Logger->critical(sprintf('Событие заказа %s не было найдено', $orderEventUid));
+            $this->Logger->critical(sprintf('Событие заказа %s не было найдено', $message->getOrder()));
             return;
         }
 

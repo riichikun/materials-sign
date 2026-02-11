@@ -73,7 +73,7 @@ final readonly class MaterialSignProcessDispatcher
         #[Target('materialsSignLogger')] private LoggerInterface $logger,
         private MaterialSignStatusHandler $MaterialSignStatusHandler,
         private MaterialSignNewInterface $MaterialSignNewRepository,
-        private CurrentOrderEventInterface $currentOrderEvent,
+        private CurrentOrderEventInterface $CurrentOrderEventRepository,
         private CurrentUserProfileEventInterface $currentUserProfileEvent,
         private AppCacheInterface $Cache,
         private MessageDispatchInterface $MessageDispatch,
@@ -84,7 +84,7 @@ final readonly class MaterialSignProcessDispatcher
         /**
          * Получаем информацию о заказе
          */
-        $currentOrderEvent = $this->currentOrderEvent
+        $currentOrderEvent = $this->CurrentOrderEventRepository
             ->forOrder($message->getOrder())
             ->find();
 

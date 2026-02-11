@@ -118,7 +118,7 @@ final class MaterialsSignsReissueController extends AbstractController
             }
 
             $materialsSignsReissueMessage = new MaterialsSignsReissueMessage(
-                $orderEvent->getId(),
+                $orderEvent->getMain(),
                 $this->getUsr()->getId(),
                 $this->getProfileUid(),
             );
