@@ -37,7 +37,7 @@ final readonly class MaterialsSignsReissueMessage
 
     private string $profile;
 
-    public function __construct(OrderEventUid $orderEvent, ?UserUid $user, UserProfileUid $profile)
+    public function __construct(OrderEventUid $orderEvent, UserUid $user, UserProfileUid $profile)
     {
         $this->orderEvent = (string) $orderEvent;
         $this->user = (string) $user;
@@ -49,9 +49,9 @@ final readonly class MaterialsSignsReissueMessage
         return new OrderEventUid($this->orderEvent);
     }
 
-    public function getUser(): ?UserUid
+    public function getUser(): UserUid
     {
-        return false === empty($this->user) ? new UserUid($this->user) : null;
+        return new UserUid($this->user);
     }
 
     public function getProfile(): UserProfileUid

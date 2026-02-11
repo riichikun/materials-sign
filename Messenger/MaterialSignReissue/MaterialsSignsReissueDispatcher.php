@@ -34,6 +34,7 @@ use BaksDev\Materials\Sign\Repository\MaterialSignProcessByOrder\MaterialSignPro
 use BaksDev\Materials\Sign\Type\Id\MaterialSignUid;
 use BaksDev\Orders\Order\Entity\Event\OrderEvent;
 use BaksDev\Products\Product\Repository\CurrentProductIdentifier\CurrentProductIdentifierByEventInterface;
+use BaksDev\Products\Product\Repository\CurrentProductIdentifier\CurrentProductIdentifierResult;
 use BaksDev\Products\Product\Repository\ProductMaterials\ProductMaterialsInterface;
 use BaksDev\Products\Product\Type\Material\MaterialUid;
 use Doctrine\ORM\EntityManagerInterface;
@@ -62,7 +63,7 @@ final readonly class MaterialsSignsReissueDispatcher
 
         $orderEvent = $this->EntityManager->getRepository(OrderEvent::class)->find($orderEventUid);
 
-        if(false === $orderEvent instanceof OrderEvent)
+        if(false === ($orderEvent instanceof OrderEvent))
         {
             $this->Logger->critical(sprintf('Событие заказа %s не было найдено', $orderEventUid));
             return;
@@ -76,6 +77,16 @@ final readonly class MaterialsSignsReissueDispatcher
         $signs = $this->MaterialSignProcessByOrderRepository
             ->forOrder($orderEvent->getMain())
             ->findAllByOrder();
+
+        if(true === empty($signs))
+        {
+            $this->Logger->critical(
+                sprintf("Не были найдены честные знаки для заказа %s", $orderEvent->getMain()),
+                [self::class.':'.__LINE__, var_export($message, true)]
+            );
+
+            return;
+        }
 
         /** @var MaterialSignEvent $materialSignEvent*/
         foreach($signs as $materialSignEvent)
@@ -110,6 +121,16 @@ final readonly class MaterialsSignsReissueDispatcher
                 ->forVariation($orderProduct->getVariation())
                 ->forModification($orderProduct->getModification())
                 ->find();
+
+            if(false === ($currentProductIdentifier instanceof CurrentProductIdentifierResult))
+            {
+                $this->Logger->critical(
+                    sprintf("Не найдены идентификаторы для события продукта %s", $orderProduct->getProduct()),
+                    [self::class.':'.__LINE__, var_export($message, true)]
+                );
+
+                continue;
+            }
 
 
             /** Получаем список материалов продукции */
