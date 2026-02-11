@@ -115,29 +115,29 @@ final class GroupMaterialSignsByOrderRepository implements GroupMaterialSignsByO
 
         $dbal
             ->addSelect('COUNT(*) AS counter')
+            ->join(
+                'event',
+                MaterialSign::class,
+                'main',
+                'main.event = event.id'
+            );
+
+        $dbal
             ->addSelect('invariable.part AS sign_part')
             ->join(
                 'event',
                 MaterialSignInvariable::class,
                 'invariable',
-                'invariable.main = event.main'
+                'invariable.main = main.id'
             );
+
 
         $dbal
             ->leftJoin(
-                'invariable',
+                'main',
                 MaterialSignCode::class,
                 'code',
-                'code.main = invariable.main'
-            );
-
-
-        $dbal
-            ->join(
-                'invariable',
-                MaterialSign::class,
-                'main',
-                'main.id = invariable.main'
+                'code.main = main.id'
             );
 
 

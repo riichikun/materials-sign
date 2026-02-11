@@ -43,7 +43,7 @@ final class MaterialSignInvariableDTO implements MaterialSignInvariableInterface
      * Продавец честного пользователя
      */
     #[Assert\Uuid]
-    private readonly ?UserProfileUid $seller;
+    private ?UserProfileUid $seller = null;
 
     /**
      * Part
@@ -78,6 +78,12 @@ final class MaterialSignInvariableDTO implements MaterialSignInvariableInterface
             $this->seller = $seller;
         }
 
+        return $this;
+    }
+
+    public function setNullSeller(): self
+    {
+        $this->seller = null;
         return $this;
     }
 }

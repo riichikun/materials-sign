@@ -47,6 +47,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 #[When(env: 'test')]
 #[Group('materials-sign')]
+#[Group('materials-sign-repository')]
 class MaterialSignNewTest extends KernelTestCase
 {
     private static string|false $user = false;
@@ -94,8 +95,8 @@ class MaterialSignNewTest extends KernelTestCase
 
     public function testUseCase(): void
     {
-        self::assertTrue(true);
-        return;
+//        self::assertTrue(true);
+//        return;
 
         /** @var MaterialSignNewInterface $MaterialSignNewInterface */
         $MaterialSignNewInterface = self::getContainer()->get(MaterialSignNewInterface::class);
@@ -121,6 +122,15 @@ class MaterialSignNewTest extends KernelTestCase
             ->forModificationConst(self::$modification)
             ->getOneMaterialSign();
 
+//        $MaterialSignEvent = $MaterialSignNewInterface
+//            ->forUser('01941714-d980-79b9-95ca-3c423a8bdc17')
+//            ->forProfile(new UserProfileUid('01941715-9d2a-7d23-8bef-2f7dbc98331a'))
+//            ->forMaterial('019b5001-4aea-7f66-a7f8-4d75c6bdba8a')
+//            ->forOfferConst(null)
+//            ->forVariationConst(null)
+//            ->forModificationConst(null)
+//            ->getOneMaterialSign();
+//dd($MaterialSignEvent);
         self::assertNotFalse($MaterialSignEvent);
 
     }
